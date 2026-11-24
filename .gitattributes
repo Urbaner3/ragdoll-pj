@@ -1,0 +1,6 @@
+*.dxf filter=lfs diff=lfs merge=lfs -text
+*.glb filter=lfs diff=lfs merge=lfs -text
+*.stl filter=lfs diff=lfs merge=lfs -text
+
+# 網站用的壓縮模型必須是普通 Git 檔案，GitHub Pages 才能直接提供
+models/rooster-web.glb !filter !diff !merge

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>公雞布偶｜3D 產品展示</title>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.4.0/model-viewer.min.js"></script>
+  <style>
+    :root { color-scheme: light; --brown:#553622; --gold:#d99a24; --cream:#fbf7ef; }
+    * { box-sizing:border-box }
+    body { margin:0; background:var(--cream); color:#30251d; font-family:system-ui,-apple-system,"Noto Sans TC",sans-serif; }
+    header { padding:24px clamp(16px,4vw,48px) 12px; }
+    h1 { margin:0 0 6px; font-size:clamp(24px,4vw,36px); color:var(--brown); }
+    .sub { color:#76685d; margin:0; }
+    main { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(260px,.8fr); gap:18px; padding:12px clamp(16px,4vw,48px) 32px; }
+    .panel { background:white; border:1px solid #e6d9c9; border-radius:18px; overflow:hidden; box-shadow:0 8px 26px #573c1b12; }
+    .viewer-wrap { position:relative; background:radial-gradient(ellipse at center,#fff 0,#f7f0e6 78%); }
+    model-viewer { width:100%; height:min(68vh,680px); min-height:380px; --poster-color:transparent; background:transparent; }
+    .controls { display:flex; flex-wrap:wrap; gap:8px; padding:14px; border-top:1px solid #eee4d9; }
+    button,.file-label { border:1px solid #d9c8b5; background:#fffaf3; color:var(--brown); border-radius:999px; padding:9px 14px; font:inherit; font-size:14px; cursor:pointer; }
+    button:hover,.file-label:hover { background:#f4e8d8; }
+    button.primary { background:var(--brown); color:white; border-color:var(--brown); }
+    input[type=file] { display:none; }
+    aside { padding:20px; }
+    h2 { margin:0 0 14px; font-size:19px; color:var(--brown); }
+    .drop { border:2px dashed #d8c4ad; border-radius:14px; padding:18px; text-align:center; background:#fffcf8; margin-bottom:20px; }
+    .drop p { margin:7px 0 0; color:#78695d; font-size:13px; }
+    .spec { display:grid; grid-template-columns:1fr auto; gap:10px; padding:10px 0; border-bottom:1px solid #eee6dd; font-size:14px; }
+    .spec strong { color:#34251a; font-variant-numeric:tabular-nums; }
+    .note { margin-top:16px; padding:12px; background:#fff7e9; border-radius:12px; color:#70512c; font-size:13px; line-height:1.6; }
+    #status { font-size:13px; color:#6f6257; min-height:20px; margin-top:10px; overflow-wrap:anywhere; }
+    footer { padding:0 clamp(16px,4vw,48px) 28px; color:#8a7b6e; font-size:12px; }
+    @media(max-width:800px) { main { grid-template-columns:1fr; } model-viewer { height:58vh; min-height:340px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>公雞布偶｜3D 產品展示</h1>
+    <p class="sub">互動式模型檢視・旋轉・縮放・尺寸參考</p>
+  </header>
+  <main>
+    <section class="panel">
+      <div class="viewer-wrap">
+        <model-viewer id="viewer" camera-controls touch-action="pan-y"
+          src="../models/rooster-web.glb"
+          poster="../images/poster.jpg"
+          auto-rotate auto-rotate-delay="1200" rotation-per-second="18deg"
+          environment-image="neutral" exposure="1" shadow-intensity="1"
+          camera-orbit="180deg 75deg auto" field-of-view="30deg"
+          alt="公雞布偶 3D 模型">
+          <div slot="progress-bar"></div>
+        </model-viewer>
+      </div>
+      <div class="controls">
+        <button class="primary" id="front">正面</button>
+        <button id="side">側面</button>
+        <button id="back">背面</button>
+        <button id="reset">重設視角</button>
+        <button id="spin">暫停旋轉</button>
+      </div>
+    </section>
+    <aside class="panel">
+      <h2>載入 3D 模型</h2>
+      <div class="drop">
+        <label class="file-label primary" for="file">選擇其他 GLB / glTF 檔案</label>
+        <input id="file" type="file" accept=".glb,.gltf,model/gltf-binary,model/gltf+json">
+        <p>預設自動載入 <code>models/rooster.glb</code>；模型只在本機瀏覽器載入。</p>
+        <div id="status">正在載入模型…</div>
+      </div>
+      <h2>產品尺寸參考</h2>
+      <div class="spec"><span>高度（校正後）</span><strong id="height">載入後顯示</strong></div>
+      <div class="spec"><span>正面寬度</span><strong id="width">載入後顯示</strong></div>
+      <div class="spec"><span>前後厚度</span><strong id="depth">載入後顯示</strong></div>
+      <div class="spec"><span>包圍盒（寬×高×深）</span><strong id="bounds">載入後顯示</strong></div>
+      <div class="note">
+        模型已依「高度 18 cm」自動等比例校正。Meshy 生成模型的比例與真實布偶仍有誤差；正式打樣前，請在 Blender 等 3D 軟體確認尺寸與正面、側面、背面。
+      </div>
+    </aside>
+  </main>
+  <footer>建議使用最新版 Chrome、Edge 或 Firefox。此展示頁使用 Google model-viewer，首次開啟需要網路連線載入元件。</footer>
+<script>
+  const viewer = document.querySelector('#viewer');
+  const fileInput = document.querySelector('#file');
+  const statusEl = document.querySelector('#status');
+  const boundsEl = document.querySelector('#bounds');
+  const heightEl = document.querySelector('#height');
+  const widthEl = document.querySelector('#width');
+  const depthEl = document.querySelector('#depth');
+  const TARGET_HEIGHT_CM = 18;
+  let currentUrl = null;
+  let spinning = true;
+
+  function calibrate() {
+    const d = viewer.getDimensions();
+    if (!d || !(d.y > 0)) throw new Error('無法讀取模型尺寸。');
+    const current = parseFloat(viewer.scale) || 1;
+    const factor = (TARGET_HEIGHT_CM / 100) / (d.y / current);
+    viewer.scale = `${factor} ${factor} ${factor}`;
+    const cm = [d.x / current * factor * 100, d.y / current * factor * 100, d.z / current * factor * 100];
+    heightEl.textContent = `約 ${cm[1].toFixed(1)} cm`;
+    widthEl.textContent = `約 ${cm[0].toFixed(1)} cm`;
+    depthEl.textContent = `約 ${cm[2].toFixed(1)} cm`;
+    boundsEl.textContent = `${cm[0].toFixed(1)} × ${cm[1].toFixed(1)} × ${cm[2].toFixed(1)} cm`;
+    statusEl.textContent = `已載入並校正比例（縮放 ${factor.toFixed(4)}×）`;
+    viewer.updateFraming();
+  }
+
+  viewer.addEventListener('load', () => {
+    try { calibrate(); }
+    catch (err) { statusEl.textContent = err.message; }
+  });
+  viewer.addEventListener('error', () => {
+    statusEl.textContent = '模型載入失敗，請確認 models/rooster.glb 是否存在。';
+  });
+  if (viewer.loaded) {
+    try { calibrate(); } catch (err) { statusEl.textContent = err.message; }
+  }
+
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) return;
+    if (currentUrl) URL.revokeObjectURL(currentUrl);
+    currentUrl = URL.createObjectURL(file);
+    statusEl.textContent = `載入中：${file.name}`;
+    heightEl.textContent = widthEl.textContent = depthEl.textContent = '計算中…';
+    boundsEl.textContent = '計算中…';
+    viewer.scale = '1 1 1';
+    viewer.src = currentUrl;
+  });
+
+  document.querySelector('#front').addEventListener('click', () => viewer.cameraOrbit = '180deg 75deg auto');
+  document.querySelector('#side').addEventListener('click', () => viewer.cameraOrbit = '90deg 75deg auto');
+  document.querySelector('#back').addEventListener('click', () => viewer.cameraOrbit = '0deg 75deg auto');
+  document.querySelector('#reset').addEventListener('click', () => {
+    viewer.cameraOrbit = '180deg 75deg auto';
+    viewer.cameraTarget = 'auto';
+    viewer.fieldOfView = '30deg';
+  });
+  document.querySelector('#spin').addEventListener('click', e => {
+    spinning = !spinning;
+    viewer.autoRotate = spinning;
+    e.currentTarget.textContent = spinning ? '暫停旋轉' : '開始旋轉';
+  });
+
+  window.__viewer = viewer;
+</script>
+</body>
+</html>
