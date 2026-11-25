@@ -10,15 +10,19 @@
 
 ## 尺寸校正
 
-頁面載入後會以模型 Y 軸高度自動等比例校正為 18 cm，並顯示校正後的寬、高、深。原始設計圖標示約高 18 cm、正面寬 15 cm；Meshy 生成模型的比例仍需在 Blender 等 3D 軟體確認後才能打樣。
+頁面載入後會以模型 Y 軸高度自動等比例校正為 18 cm，並顯示校正後的寬、高、深。原始設計圖標示約高 18 cm、正面寬 15 cm；TRELLIS.2 生成模型的比例仍需在 Blender 等 3D 軟體確認後才能打樣。
 
 ## 檔案說明
 
-- `models/rooster.glb`：Meshy 原始 GLB（129 MB，Git LFS）
-- `models/rooster-web.glb`：Draco + WebP 壓縮版（約 3.4 MB，普通 Git，供 Pages 使用）
-- `models/rooster.stl`、`models/rooster.dxf`：原始高精度檔（Git LFS）
+- `models/rooster.glb`：TRELLIS.2 原始 GLB（約 7.8 MB，Git LFS）
+- `models/rooster-web.glb`：Draco + WebP 壓縮版（約 1.9 MB，普通 Git，供 Pages 使用）
+- `models/rooster.stl`：原始高精度 STL（約 9.4 MB，Git LFS）
+- `models/rooster.dxf`：原始 CAD 檔（約 557 MB，Git LFS）
+- `models/rooster3d.png`、`models/rooster_fleded.png`：模型預覽圖（約 104 KB、2.5 MB）
 - `web/`：展示頁
-- `images/`、`screenshots/`：預覽與視角截圖
+- `images/poster.jpg`：頁面海報（約 538 KB）
+- `images/preview.jpg`：預覽圖（約 538 KB）
+- `screenshots/`：視角截圖（待補手工截圖）
 
 ## 部署
 
